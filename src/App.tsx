@@ -8,15 +8,13 @@ function App() {
 
   const [operand1, setOperand1] = useState<string[]>([])
   const [operand2, setOperand2] = useState<string[]>([])
-  const [, setOperation] = useState<string>('')
-  const [, setResult] = useState<string[]>([])
+  const [operation, setOperation] = useState<string>('')
   const [powerSetMembers, setPowerSetMembers] = useState<number>(0)
 
   const handleClear = () => {
     setOperand1([])
     setOperand2([])
     setOperation('')
-    setResult([])
     setPowerSetMembers(0)
   }
 
@@ -25,7 +23,45 @@ function App() {
   }
 
   const handlePowerSetMembers = () => {
+    setOperand2([])
     setPowerSetMembers(2 ** operand1.length)
+    setOperand1([])
+  }
+
+  const handleEqualsClick = () => {
+    switch (operation) {
+      case 'union':
+        setOperand2(Array.from(new Set([...operand2, ...operand1])))
+        setOperand1([])
+        break
+      case 'intersection':
+        setOperand2(operand1.filter(value => operand2.includes(value)))
+        setOperand1([])
+        break
+      case 'cartesian':
+        setOperand2(operand1.flatMap(a => operand2.map(b => `(${a}, ${b})`)))
+        setOperand1([])
+        break
+      default:
+        break
+    }
+  }
+
+  const handleUnionClick = () => {
+    setOperation('union')
+    setOperand2(operand1)
+    setOperand1([])
+  }
+
+  const handleIntersectionClick = () => {
+    setOperation('intersection')
+    setOperand2(operand1)
+    setOperand1([])
+  }
+
+  const handleCartesianClick = () => {
+    setOperation('cartesian')
+    setOperand2(operand1)
     setOperand1([])
   }
 
@@ -45,16 +81,16 @@ function App() {
               <Grid.Col span={6}>
                 <Grid>
                   <Grid.Col span={6}>
-                    <Button >∪</Button>
+                    <Button onClick={handleUnionClick}>∪</Button>
                   </Grid.Col>
                   <Grid.Col span={6}>
-                    <Button >∩</Button>
+                    <Button onClick={handleIntersectionClick}>∩</Button>
                   </Grid.Col>
                   <Grid.Col span={6}>
                     <Button  onClick={handlePowerSetMembers}>|P(S)|</Button>
                   </Grid.Col>
                   <Grid.Col span={6}>
-                    <Button >×</Button>
+                    <Button onClick={handleCartesianClick}>×</Button>
                   </Grid.Col>
                 </Grid>
               </Grid.Col>
@@ -67,7 +103,7 @@ function App() {
                     <Button  onClick={handleClearEntry}>CE</Button>
                   </Grid.Col>
                   <Grid.Col span={12}>
-                    <Button >=</Button>
+                    <Button onClick={handleEqualsClick}>=</Button>
                   </Grid.Col>
                 </Grid>
               </Grid.Col>
